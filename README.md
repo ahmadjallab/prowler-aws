@@ -256,12 +256,19 @@ prowler --list-compliance
 - rbi_cyber_security_framework_aws
 - soc2_aws
 
-### Install Docker on ec2 
+### Install Docker on ec2 instance depenting on your distrobution 
+- sudo bash 
+- sudo yum update -y 
+- root@ip-10-0-5-157:/home/ubuntu# yum update -y 
+- root@ip-10-0-5-157:/home/ubuntu# apt-get update -y 
+- root@ip-10-0-5-157:/home/ubuntu# apt update -y
 - sudo yum update -y
+
 - sudo yum -y install docker
  
 - sudo service docker start
 - sudo  docker run -p 8000:8000     ahmadjallab/ahmadjallab-prowler_aws:v2
+
 - sudo yum install    nginx
 - sudo yum install  -y  python3-pip
 - sudo vim /etc/nginx/sites-enabled/fastapi_nginx
