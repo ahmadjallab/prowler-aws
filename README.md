@@ -270,8 +270,15 @@ prowler --list-compliance
 - sudo  docker run -p 8000:8000     ahmadjallab/ahmadjallab-prowler_aws:v2
 
 - sudo yum install    nginx
-- sudo yum install  -y  python3-pip
+
 - sudo vim /etc/nginx/sites-enabled/fastapi_nginx
+- include /etc/nginx/sites-enabled/fastapi_nginx; in /etc/nginx/nginx.conf
+- or can start with default conf server
+-  
+- sudo systemctl start nginx
+- sudo systemctl restart nginx
+- sudo systemctl enable nginx
+
 
 server {
         listen 80;
