@@ -1,0 +1,238 @@
+
+=== SEC01 Compliance Report ===
+- Check ID: ec2_instance_managed_by_ssm
+  Title: Check if EC2 instances are managed by Systems Manager.
+  Description: EC2 Instance i-0008c6c004a337c85 is unmanaged by Systems Manager because it is stopped.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0008c6c004a337c85
+  Remediation: Verify and apply Systems Manager Prerequisites.
+  Remediation Details: https://docs.aws.amazon.com/systems-manager/latest/userguide/managed_instances.html
+- Check ID: ec2_instance_managed_by_ssm
+  Title: Check if EC2 instances are managed by Systems Manager.
+  Description: EC2 Instance i-010109dc5a36419ac is unmanaged by Systems Manager because it is stopped.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-010109dc5a36419ac
+  Remediation: Verify and apply Systems Manager Prerequisites.
+  Remediation Details: https://docs.aws.amazon.com/systems-manager/latest/userguide/managed_instances.html
+- Check ID: ec2_instance_managed_by_ssm
+  Title: Check if EC2 instances are managed by Systems Manager.
+  Description: EC2 Instance i-0681d57aa15a2e46b is unmanaged by Systems Manager because it is stopped.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0681d57aa15a2e46b
+  Remediation: Verify and apply Systems Manager Prerequisites.
+  Remediation Details: https://docs.aws.amazon.com/systems-manager/latest/userguide/managed_instances.html
+- Check ID: ec2_instance_managed_by_ssm
+  Title: Check if EC2 instances are managed by Systems Manager.
+  Description: EC2 Instance i-0b5bb290be99628fc is not managed by Systems Manager.
+  Severity: MEDIUM
+  Status: FAILED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0b5bb290be99628fc
+  Remediation: Verify and apply Systems Manager Prerequisites.
+  Remediation Details: https://docs.aws.amazon.com/systems-manager/latest/userguide/managed_instances.html
+
+=== SEC02 Compliance Report ===
+- Check ID: ec2_instance_secrets_user_data
+  Title: Find secrets in EC2 User Data.
+  Description: No secrets found in EC2 instance i-0008c6c004a337c85 since User Data is empty.
+  Severity: CRITICAL
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0008c6c004a337c85
+  Remediation: Implement automated detective control (e.g. using tools like Prowler) to scan accounts for passwords and secrets. Use secrets manager service to store and retrieve passwords and secrets.
+  Remediation Details: https://docs.aws.amazon.com/secretsmanager/latest/userguide/tutorials_basic.html
+- Check ID: ec2_instance_secrets_user_data
+  Title: Find secrets in EC2 User Data.
+  Description: No secrets found in EC2 instance i-010109dc5a36419ac since User Data is empty.
+  Severity: CRITICAL
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-010109dc5a36419ac
+  Remediation: Implement automated detective control (e.g. using tools like Prowler) to scan accounts for passwords and secrets. Use secrets manager service to store and retrieve passwords and secrets.
+  Remediation Details: https://docs.aws.amazon.com/secretsmanager/latest/userguide/tutorials_basic.html
+- Check ID: ec2_instance_secrets_user_data
+  Title: Find secrets in EC2 User Data.
+  Description: No secrets found in EC2 instance i-0681d57aa15a2e46b since User Data is empty.
+  Severity: CRITICAL
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0681d57aa15a2e46b
+  Remediation: Implement automated detective control (e.g. using tools like Prowler) to scan accounts for passwords and secrets. Use secrets manager service to store and retrieve passwords and secrets.
+  Remediation Details: https://docs.aws.amazon.com/secretsmanager/latest/userguide/tutorials_basic.html
+- Check ID: ec2_instance_secrets_user_data
+  Title: Find secrets in EC2 User Data.
+  Description: No secrets found in EC2 instance i-0b5bb290be99628fc User Data.
+  Severity: CRITICAL
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0b5bb290be99628fc
+  Remediation: Implement automated detective control (e.g. using tools like Prowler) to scan accounts for passwords and secrets. Use secrets manager service to store and retrieve passwords and secrets.
+  Remediation Details: https://docs.aws.amazon.com/secretsmanager/latest/userguide/tutorials_basic.html
+- Check ID: ec2_launch_template_no_secrets
+  Title: Find secrets in EC2 Launch Template
+  Description: No secrets found in User Data of any version for EC2 Launch Template ECSLaunchTemplate_Qa0YMCVveciX.
+  Severity: CRITICAL
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:launch-template/lt-043b4870ff12adf90
+  Remediation: Do not include sensitive information in user data within the launch templates, try to use Secrets Manager instead.
+  Remediation Details: https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html
+
+=== SEC03 Compliance Report ===
+- Check ID: ec2_instance_imdsv2_enabled
+  Title: Check if EC2 Instance Metadata Service Version 2 (IMDSv2) is Enabled and Required.
+  Description: EC2 Instance i-0008c6c004a337c85 has IMDSv2 enabled and required.
+  Severity: HIGH
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0008c6c004a337c85
+  Remediation: If you don't need IMDS you can turn it off. Using aws-cli you can force the instance to use only IMDSv2.
+  Remediation Details: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#configuring-instance-metadata-options
+- Check ID: ec2_instance_imdsv2_enabled
+  Title: Check if EC2 Instance Metadata Service Version 2 (IMDSv2) is Enabled and Required.
+  Description: EC2 Instance i-010109dc5a36419ac has IMDSv2 enabled and required.
+  Severity: HIGH
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-010109dc5a36419ac
+  Remediation: If you don't need IMDS you can turn it off. Using aws-cli you can force the instance to use only IMDSv2.
+  Remediation Details: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#configuring-instance-metadata-options
+- Check ID: ec2_instance_imdsv2_enabled
+  Title: Check if EC2 Instance Metadata Service Version 2 (IMDSv2) is Enabled and Required.
+  Description: EC2 Instance i-0681d57aa15a2e46b has IMDSv2 enabled and required.
+  Severity: HIGH
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0681d57aa15a2e46b
+  Remediation: If you don't need IMDS you can turn it off. Using aws-cli you can force the instance to use only IMDSv2.
+  Remediation Details: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#configuring-instance-metadata-options
+- Check ID: ec2_instance_imdsv2_enabled
+  Title: Check if EC2 Instance Metadata Service Version 2 (IMDSv2) is Enabled and Required.
+  Description: EC2 Instance i-0b5bb290be99628fc has IMDSv2 disabled or not required.
+  Severity: HIGH
+  Status: FAILED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0b5bb290be99628fc
+  Remediation: If you don't need IMDS you can turn it off. Using aws-cli you can force the instance to use only IMDSv2.
+  Remediation Details: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#configuring-instance-metadata-options
+- Check ID: ec2_instance_profile_attached
+  Title: Ensure IAM instance roles are used for AWS resource access from instances
+  Description: EC2 Instance i-0008c6c004a337c85 associated with Instance Profile Role arn:aws:iam::849361146932:instance-profile/AmazonSSMRoleForInstancesQuickSetup.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0008c6c004a337c85
+  Remediation: Create an IAM instance role if necessary and attach it to the corresponding EC2 instance..
+  Remediation Details: http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
+- Check ID: ec2_instance_profile_attached
+  Title: Ensure IAM instance roles are used for AWS resource access from instances
+  Description: EC2 Instance i-0008c6c004a337c85 associated with Instance Profile Role arn:aws:iam::849361146932:instance-profile/AmazonSSMRoleForInstancesQuickSetup.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0008c6c004a337c85
+  Remediation: Create an IAM instance role if necessary and attach it to the corresponding EC2 instance..
+  Remediation Details: http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
+- Check ID: ec2_instance_profile_attached
+  Title: Ensure IAM instance roles are used for AWS resource access from instances
+  Description: EC2 Instance i-010109dc5a36419ac not associated with an Instance Profile Role.
+  Severity: MEDIUM
+  Status: FAILED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-010109dc5a36419ac
+  Remediation: Create an IAM instance role if necessary and attach it to the corresponding EC2 instance..
+  Remediation Details: http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
+- Check ID: ec2_instance_profile_attached
+  Title: Ensure IAM instance roles are used for AWS resource access from instances
+  Description: EC2 Instance i-010109dc5a36419ac not associated with an Instance Profile Role.
+  Severity: MEDIUM
+  Status: FAILED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-010109dc5a36419ac
+  Remediation: Create an IAM instance role if necessary and attach it to the corresponding EC2 instance..
+  Remediation Details: http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
+- Check ID: ec2_instance_profile_attached
+  Title: Ensure IAM instance roles are used for AWS resource access from instances
+  Description: EC2 Instance i-0681d57aa15a2e46b not associated with an Instance Profile Role.
+  Severity: MEDIUM
+  Status: FAILED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0681d57aa15a2e46b
+  Remediation: Create an IAM instance role if necessary and attach it to the corresponding EC2 instance..
+  Remediation Details: http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
+- Check ID: ec2_instance_profile_attached
+  Title: Ensure IAM instance roles are used for AWS resource access from instances
+  Description: EC2 Instance i-0681d57aa15a2e46b not associated with an Instance Profile Role.
+  Severity: MEDIUM
+  Status: FAILED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0681d57aa15a2e46b
+  Remediation: Create an IAM instance role if necessary and attach it to the corresponding EC2 instance..
+  Remediation Details: http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
+- Check ID: ec2_instance_profile_attached
+  Title: Ensure IAM instance roles are used for AWS resource access from instances
+  Description: EC2 Instance i-0b5bb290be99628fc associated with Instance Profile Role arn:aws:iam::849361146932:instance-profile/ecsInstanceRole.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0b5bb290be99628fc
+  Remediation: Create an IAM instance role if necessary and attach it to the corresponding EC2 instance..
+  Remediation Details: http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
+- Check ID: ec2_instance_profile_attached
+  Title: Ensure IAM instance roles are used for AWS resource access from instances
+  Description: EC2 Instance i-0b5bb290be99628fc associated with Instance Profile Role arn:aws:iam::849361146932:instance-profile/ecsInstanceRole.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0b5bb290be99628fc
+  Remediation: Create an IAM instance role if necessary and attach it to the corresponding EC2 instance..
+  Remediation Details: http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
+- Check ID: ec2_instance_public_ip
+  Title: Check for EC2 Instances with Public IP.
+  Description: EC2 Instance i-0008c6c004a337c85 does not have a Public IP.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0008c6c004a337c85
+  Remediation: Use an ALB and apply WAF ACL.
+  Remediation Details: https://aws.amazon.com/blogs/aws/aws-web-application-firewall-waf-for-application-load-balancers/
+- Check ID: ec2_instance_public_ip
+  Title: Check for EC2 Instances with Public IP.
+  Description: EC2 Instance i-010109dc5a36419ac does not have a Public IP.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-010109dc5a36419ac
+  Remediation: Use an ALB and apply WAF ACL.
+  Remediation Details: https://aws.amazon.com/blogs/aws/aws-web-application-firewall-waf-for-application-load-balancers/
+- Check ID: ec2_instance_public_ip
+  Title: Check for EC2 Instances with Public IP.
+  Description: EC2 Instance i-0681d57aa15a2e46b does not have a Public IP.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0681d57aa15a2e46b
+  Remediation: Use an ALB and apply WAF ACL.
+  Remediation Details: https://aws.amazon.com/blogs/aws/aws-web-application-firewall-waf-for-application-load-balancers/
+- Check ID: ec2_instance_public_ip
+  Title: Check for EC2 Instances with Public IP.
+  Description: EC2 Instance i-0b5bb290be99628fc does not have a Public IP.
+  Severity: MEDIUM
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:instance/i-0b5bb290be99628fc
+  Remediation: Use an ALB and apply WAF ACL.
+  Remediation Details: https://aws.amazon.com/blogs/aws/aws-web-application-firewall-waf-for-application-load-balancers/
+- Check ID: ec2_securitygroup_allow_wide_open_public_ipv4
+  Title: Ensure no security groups allow ingress and egress from wide-open IP address with a mask between 0 and 24.
+  Description: Security group security-group-for-inbound-nfs-d-irqz2ghbkstq (sg-04b1cb4c556da9a02) has no potential wide-open non-RFC1918 address.
+  Severity: HIGH
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:security-group/sg-04b1cb4c556da9a02
+  Remediation: Use a Zero Trust approach. Narrow ingress traffic as much as possible. Consider north-south as well as east-west traffic.
+  Remediation Details: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html
+- Check ID: ec2_securitygroup_allow_wide_open_public_ipv4
+  Title: Ensure no security groups allow ingress and egress from wide-open IP address with a mask between 0 and 24.
+  Description: Security group launch-wizard-prowler-dashboard (sg-05de30911189dfc23) has no potential wide-open non-RFC1918 address.
+  Severity: HIGH
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:security-group/sg-05de30911189dfc23
+  Remediation: Use a Zero Trust approach. Narrow ingress traffic as much as possible. Consider north-south as well as east-west traffic.
+  Remediation Details: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html
+- Check ID: ec2_securitygroup_allow_wide_open_public_ipv4
+  Title: Ensure no security groups allow ingress and egress from wide-open IP address with a mask between 0 and 24.
+  Description: Security group soc_splunk_host (sg-0a5620eccbeda3d08) has no potential wide-open non-RFC1918 address.
+  Severity: HIGH
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:security-group/sg-0a5620eccbeda3d08
+  Remediation: Use a Zero Trust approach. Narrow ingress traffic as much as possible. Consider north-south as well as east-west traffic.
+  Remediation Details: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html
+- Check ID: ec2_securitygroup_allow_wide_open_public_ipv4
+  Title: Ensure no security groups allow ingress and egress from wide-open IP address with a mask between 0 and 24.
+  Description: Security group launch-wizard-prowlerAPI (sg-02680bafb752fbe91) has no potential wide-open non-RFC1918 address.
+  Severity: HIGH
+  Status: PASSED
+  Resource ID: arn:aws:ec2:us-east-1:849361146932:security-group/sg-02680bafb752fbe91
+  Remediation: Use a Zero Trust approach. Narrow ingress traffic as much as possible. Consider north-south as well as east-west traffic.
+  Remediation Details: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html

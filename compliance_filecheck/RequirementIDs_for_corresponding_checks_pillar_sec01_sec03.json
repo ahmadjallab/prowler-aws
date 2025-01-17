@@ -1,0 +1,140 @@
+{
+    "SEC01-BP01": [
+        "organizations_account_part_of_organizations"
+    ],
+    "SEC01-BP02": [
+        "iam_root_hardware_mfa_enabled",
+        "iam_root_mfa_enabled",
+        "iam_no_root_access_key"
+    ],
+    "SEC01-BP03": [],
+    "SEC01-BP04": [],
+    "SEC01-BP05": [],
+    "SEC01-BP06": [
+        "ec2_instance_managed_by_ssm",
+        "ecr_repositories_scan_images_on_push_enabled",
+        "ecr_repositories_scan_vulnerabilities_in_latest_image"
+    ],
+    "SEC01-BP07": [
+        "wellarchitected_workload_no_high_or_medium_risks"
+    ],
+    "SEC01-BP08": [],
+    "SEC02-BP01": [
+        "iam_password_policy_lowercase",
+        "iam_password_policy_minimum_length_14",
+        "iam_password_policy_number",
+        "iam_password_policy_reuse_24",
+        "iam_password_policy_symbol",
+        "iam_password_policy_uppercase",
+        "directoryservice_radius_server_security_protocol",
+        "directoryservice_supported_mfa_radius_enabled",
+        "iam_user_hardware_mfa_enabled",
+        "iam_user_mfa_enabled_console_access",
+        "iam_user_two_active_access_key",
+        "iam_user_no_setup_initial_access_key",
+        "opensearch_service_domains_use_cognito_authentication_for_kibana",
+        "sagemaker_notebook_instance_root_access_disabled",
+        "iam_avoid_root_usage"
+    ],
+    "SEC02-BP02": [
+        "iam_rotate_access_key_90_days"
+    ],
+    "SEC02-BP03": [
+        "autoscaling_find_secrets_ec2_launch_configuration",
+        "awslambda_function_no_secrets_in_code",
+        "awslambda_function_no_secrets_in_variables",
+        "cloudformation_stack_outputs_find_secrets",
+        "ec2_instance_secrets_user_data",
+        "ec2_launch_template_no_secrets",
+        "ecs_task_definitions_no_environment_secrets",
+        "ssm_document_secrets"
+    ],
+    "SEC02-BP04": [
+        "iam_role_cross_service_confused_deputy_prevention"
+    ],
+    "SEC02-BP05": [
+        "iam_rotate_access_key_90_days",
+        "kms_cmk_rotation_enabled",
+        "secretsmanager_automatic_rotation_enabled"
+    ],
+    "SEC02-BP06": [
+        "iam_policy_allows_privilege_escalation",
+        "iam_policy_attached_only_to_group_or_roles"
+    ],
+    "SEC03-BP01": [
+        "ec2_instance_imdsv2_enabled",
+        "ec2_instance_profile_attached",
+        "cloudwatch_cross_account_sharing_disabled"
+    ],
+    "SEC03-BP02": [
+        "ec2_instance_profile_attached",
+        "iam_aws_attached_policy_no_administrative_privileges",
+        "iam_customer_attached_policy_no_administrative_privileges",
+        "iam_customer_unattached_policy_no_administrative_privileges",
+        "iam_inline_policy_no_administrative_privileges",
+        "opensearch_service_domains_internal_user_database_enabled"
+    ],
+    "SEC03-BP03": [
+        "account_maintain_current_contact_details",
+        "account_security_contact_information_is_registered",
+        "account_security_questions_are_registered_in_the_aws_account"
+    ],
+    "SEC03-BP04": [
+        "iam_customer_attached_policy_no_administrative_privileges",
+        "iam_customer_unattached_policy_no_administrative_privileges"
+    ],
+    "SEC03-BP05": [
+        "organizations_account_part_of_organizations"
+    ],
+    "SEC03-BP06": [
+        "appstream_fleet_maximum_session_duration",
+        "appstream_fleet_session_disconnect_timeout",
+        "appstream_fleet_session_idle_disconnect_timeout",
+        "cloudwatch_log_group_retention_policy_specific_days_enabled",
+        "codebuild_project_older_90_days",
+        "ec2_elastic_ip_unassigned",
+        "ecr_repositories_lifecycle_policy_enabled",
+        "elbv2_listeners_underneath",
+        "iam_password_policy_expires_passwords_within_90_days_or_less"
+    ],
+    "SEC03-BP07": [
+        "ec2_ebs_public_snapshot",
+        "ec2_instance_public_ip",
+        "opensearch_service_domains_not_publicly_accessible",
+        "emr_cluster_master_nodes_no_public_ip",
+        "emr_cluster_account_public_block_enabled",
+        "emr_cluster_publicly_accesible",
+        "glacier_vaults_policy_public_access",
+        "awslambda_function_not_publicly_accessible",
+        "rds_instance_no_public_access",
+        "rds_snapshots_public_access",
+        "kms_key_not_publicly_accessible",
+        "redshift_cluster_public_access",
+        "s3_account_level_public_access_blocks",
+        "s3_bucket_public_access",
+        "s3_bucket_policy_public_write_access",
+        "sagemaker_notebook_instance_without_direct_internet_access_configured",
+        "appstream_fleet_default_internet_access_disabled",
+        "apigateway_restapi_public",
+        "awslambda_function_url_cors_policy",
+        "cloudtrail_logs_s3_bucket_is_not_publicly_accessible",
+        "codeartifact_packages_external_public_publishing_disabled",
+        "ecr_repositories_not_publicly_accessible",
+        "efs_not_publicly_accessible",
+        "eks_cluster_not_publicly_accessible",
+        "elb_internet_facing",
+        "elbv2_internet_facing",
+        "sns_topics_not_publicly_accessible",
+        "sqs_queues_not_publicly_accessible",
+        "ssm_documents_set_as_public",
+        "ec2_securitygroup_allow_wide_open_public_ipv4",
+        "ec2_ami_public"
+    ],
+    "SEC03-BP08": [
+        "opensearch_service_domains_not_publicly_accessible",
+        "awslambda_function_not_publicly_accessible",
+        "sagemaker_notebook_instance_without_direct_internet_access_configured",
+        "ssm_document_secrets",
+        "codebuild_project_user_controlled_buildspec"
+    ]
+}
