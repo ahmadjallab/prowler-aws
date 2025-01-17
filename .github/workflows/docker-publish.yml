@@ -30,19 +30,35 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
+      # Read version from file and increment
+      - name: Read and increment version
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' version.json)
+          NEXT_VERSION=$((VERSION + 1))
+          echo $NEXT_VERSION > version.next
+          echo "version=v$NEXT_VERSION" >> $GITHUB_OUTPUT
+
+      # Update version file
+      - name: Update version file
+        if: github.event_name != 'pull_request'
+        run: |
+          NEXT_VERSION=$(cat version.next)
+          echo "{\"version\": \"$NEXT_VERSION\"}" > version.json
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add version.json
+          git commit -m "Bump version to $NEXT_VERSION [skip ci]"
+          git push
+
+      # Extract metadata (tags) for Docker
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ steps.version.outputs.version }}
 
       # Build and push Docker image
       - name: Build and push Docker image
@@ -51,4 +67,3 @@ jobs:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}

@@ -172,21 +172,19 @@ sudo docker run -d \
 # Create Nginx configuration
 sudo nano /etc/nginx/sites-enabled/default   # For Ubuntu
 # OR
-sudo nano /etc/nginx/conf.d/default.conf     # For Amazon Linux
+sudo nano /etc/nginx/nginx.conf     # For Amazon Linux
 ```
 
 Add this configuration:
 ```nginx
 server {
     listen 80;
+    listen [::]:80;
     server_name ec2-44-202-156-36.compute-1.amazonaws.com;
 
     location / {
         proxy_pass http://localhost:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+       
     }
 }
 ```
@@ -320,40 +318,101 @@ Note: The VPN client configuration file and certificates are sensitive security 
 
 ## API Endpoints
 
-### 1. Root Endpoint
+### Root Endpoint
 - **GET /** 
-  - Welcome message and API status
-  - Response: `{"message": "Welcome to the Prowler Security Assessment API"}`
+  - Landing page with API documentation
+  - Response: HTML page with API overview and documentation link
 
-### 2. Run Security Checks
-- **GET /run-prowler-generate-checks-report-fundings**
+### Security Assessment
+- **GET /api/run-prowler-generate-checks-report-fundings**
   - Runs Prowler security checks and generates findings report
-  - Generates ASFF format JSON report
-  - Returns findings with status
+  - Response Format:
+    ```json
+    {
+        "status": "success",
+        "results": {
+            "findings": [
+                {
+                    "check_id": "string",
+                    "title": "string",
+                    "severity": "string",
+                    "status": "string",
+                    "remediation_text": "string"
+                }
+            ]
+        }
+    }
+    ```
 
-### 3. Export Compliance Report
-- **GET /export-compliance-report**
+### Compliance Report
+- **GET /api/export-compliance-report**
   - Generates compliance report mapped to AWS Well-Architected Framework
-  - Maps findings to Security Pillars (SEC01, SEC02, SEC03)
-  - Returns formatted compliance report
+  - Response Format:
+    ```json
+    {
+        "status": "success",
+        "results": {
+            "SEC01": [],
+            "SEC02": [],
+            "SEC03": []
+        }
+    }
+    ```
 
-## File Structure
-
+## Project Structure
 ```
 plowerappdev/
-├── main.py                 # FastAPI application and endpoints
-├── endpointFunc.py        # Endpoint implementation functions
+├── .github/
+│   └── workflows/
+│       └── docker-publish.yml    # GitHub Actions workflow
+├── static/
+│   └── index.html               # Landing page
 ├── utils/
-│   ├── ReportGenerationPipeline.py    # Report generation orchestration
-│   ├── parseFindings_prowlerScan.py   # Prowler findings parser
-│   └── scan_mapping_findings_func.py   # Security pillar mapping logic
+│   ├── ReportGenerationPipeline.py    # Report generation logic
+│   ├── parseFindings_prowlerScan.py   # Findings parser
+│   └── scan_mapping_findings_func.py   # Security mapping
 ├── compliance_filecheck/
-│   └── RequirementIDs_for_corresponding_checks_pillar_sec01_sec03.json  # Mapping configuration
-├── results/               # Generated reports directory
+│   └── RequirementIDs_for_corresponding_checks_pillar_sec01_sec03.json
+├── results/                     # Generated reports
+│   └── prowler_scan.asff.json
 ├── output/
-│   └── compliance/       # Compliance reports output
-└── .env                  # Environment configuration
+│   └── compliance/             # Compliance reports
+├── .dockerignore               # Docker ignore rules
+├── .env                        # Environment variables
+├── .gitignore                 # Git ignore rules
+├── Dockerfile                 # Docker build instructions
+├── LICENSE                    # Project license
+├── README.md                  # Project documentation
+├── endpointFunc.py           # API endpoint functions
+├── main.py                   # FastAPI application
+└── requirements.txt          # Python dependencies
 ```
+
+### Key Components
+
+1. **API Layer** (`main.py`, `endpointFunc.py`)
+   - FastAPI application setup
+   - API endpoint definitions
+   - Request/response handling
+
+2. **Security Assessment** (`utils/`)
+   - Prowler integration
+   - Findings parsing
+   - Report generation
+
+3. **Compliance Mapping** (`compliance_filecheck/`)
+   - Security pillar mappings
+   - Compliance requirements
+
+4. **Infrastructure** (`Dockerfile`, `docker-publish.yml`)
+   - Container configuration
+   - CI/CD pipeline
+   - Deployment automation
+
+5. **Documentation** (`static/`, `README.md`)
+   - API documentation
+   - Setup instructions
+   - Usage guides
 
 ## Response Formats
 
