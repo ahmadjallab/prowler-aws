@@ -71,24 +71,252 @@ The API will be available at http://localhost:8000
 
 ### Option 2: Running Locally
 
-1. Configure AWS credentials in `.env` file:
+#### Python Environment Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/prowler-api.git
+cd prowler-api
+```
+
+2. Create and activate virtual environment:
+
+For Windows:
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+For Linux/Mac:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Configure AWS credentials in `.env` file:
 ```bash
 AWS_ACCESS_KEY_ID=your_access_key
 AWS_SECRET_ACCESS_KEY=your_secret_key
 AWS_SESSION_TOKEN=your_session_token  # Optional
 ```
 
-2. Install dependencies:
+5. Run the application:
 ```bash
-pip install -r requirements.txt
-```
-
-3. Run the application:
-```bash
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at http://localhost:8000
+
+## Accessing the API
+
+### Option 1: Public EC2 Instance
+
+The API is publicly accessible at:
+```
+http://ec2-44-202-156-36.compute-1.amazonaws.com
+```
+
+#### API Endpoints
+- Documentation: `http://ec2-44-202-156-36.compute-1.amazonaws.com/docs`
+- Security Checks: `http://ec2-44-202-156-36.compute-1.amazonaws.com/api/run-prowler-generate-checks-report-fundings`
+- Compliance Report: `http://ec2-44-202-156-36.compute-1.amazonaws.com/api/export-compliance-report`
+
+#### Infrastructure Setup
+
+1. EC2 Configuration:
+   - Amazon Linux 2/Ubuntu instance
+   - Security Group: 
+     - Inbound: HTTP (80), HTTPS (443)
+     - Outbound: All traffic
+
+2. Install Dependencies:
+```bash
+# Update system packages
+sudo yum update -y   # For Amazon Linux
+# OR
+sudo apt update -y   # For Ubuntu
+
+# Install Docker
+sudo yum install -y docker   # For Amazon Linux
+# OR
+sudo apt install -y docker.io   # For Ubuntu
+
+# Start Docker service
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Install Nginx
+sudo yum install -y nginx   # For Amazon Linux
+# OR
+sudo apt install -y nginx   # For Ubuntu
+```
+
+3. Run Docker Container:
+```bash
+# Pull and run the container
+sudo docker run -d \
+  -p 8000:8000 \
+  --name prowler-api \
+  --restart unless-stopped \
+  --env-file .env \
+  ahmadjallab/ahmadjallab-prowler_aws:latest
+```
+
+4. Configure Nginx:
+```bash
+# Create Nginx configuration
+sudo nano /etc/nginx/sites-enabled/default   # For Ubuntu
+# OR
+sudo nano /etc/nginx/conf.d/default.conf     # For Amazon Linux
+```
+
+Add this configuration:
+```nginx
+server {
+    listen 80;
+    server_name ec2-44-202-156-36.compute-1.amazonaws.com;
+
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+5. Start Nginx:
+```bash
+sudo systemctl start nginx
+sudo systemctl enable nginx
+```
+
+6. Verify Setup:
+```bash
+# Check Docker container
+sudo docker ps
+sudo docker logs prowler-api
+
+# Check Nginx status
+sudo systemctl status nginx
+
+# Test API
+curl http://localhost:8000
+curl http://ec2-44-202-156-36.compute-1.amazonaws.com
+```
+
+#### Troubleshooting
+
+1. If Nginx fails to start:
+```bash
+sudo nginx -t                    # Test configuration
+sudo journalctl -u nginx        # Check logs
+```
+
+2. If Docker container fails:
+```bash
+sudo docker logs prowler-api    # Check container logs
+sudo docker restart prowler-api # Restart container
+```
+
+3. Common Issues:
+   - Port 80 already in use: Check and stop conflicting services
+   - Permission denied: Ensure proper file permissions
+   - Connection refused: Check security group settings
+
+## Accessing the API
+
+### Option 2: Private Access via AWS Client VPN
+
+Access the API securely through AWS Client VPN when the EC2 instance is in a private subnet:
+```
+http://10.0.132.64:80
+```
+
+#### Prerequisites
+- AWS VPN Client (Desktop application)
+- Client configuration file (Contact administrator for the file)
+- Valid certificates (Generated using Easy-RSA)
+
+#### VPC and VPN Setup
+
+1. VPC Configuration:
+   - Private subnet: 10.0.128.0/20
+   - VPN CIDR range: 192.168.0.0/22
+   
+
+2. Install AWS VPN Client:
+   - Download from [AWS VPN Client](https://aws.amazon.com/vpn/client-vpn-download/)
+   - Available for Windows, macOS, and Linux
+
+3. Configure VPN Connection:
+   - Import the provided client configuration file
+   - Certificate authentication using Easy-RSA generated certificates
+   - Configuration file contains:
+     - VPN endpoint
+     - Certificate information
+     - Routing configuration
+
+4. Connect to VPN:
+   ```bash
+   # 1. Open AWS VPN Client
+   # 2. Import configuration file
+   # 3. Click Connect
+   # 4. Verify connection status
+   ```
+
+5. Access the API:
+   - After VPN connection is established:
+   ```
+   http://10.0.132.64:80/           # API root
+   http://10.0.132.64:80/docs       # API documentation
+   ```
+
+#### Security Benefits
+- Private subnet isolation
+- Certificate-based authentication
+- Encrypted traffic
+- Access control through security groups
+- VPN session monitoring
+
+#### Troubleshooting VPN Connection
+
+1. Certificate Issues:
+```bash
+# Check certificate validity
+openssl verify -CAfile ca.crt client.crt
+```
+
+2. Connection Problems:
+- Verify VPN endpoint is reachable
+- Check security group allows VPN traffic
+- Ensure route tables are properly configured
+
+3. Common VPN Client Errors:
+   - Certificate validation failed
+   - Unable to reach VPN endpoint
+   - Authentication timeout
+   - Route conflicts
+
+#### Request Access
+
+To request VPN access:
+1. Contact administrator for:
+   - Client configuration file
+   - Client certificate
+   - Connection instructions
+2. Provide your:
+   - IP address range
+   - Purpose of access
+   - Duration needed
+
+Note: The VPN client configuration file and certificates are sensitive security materials. They will be provided through secure channels upon request.
 
 ## API Endpoints
 
@@ -267,14 +495,14 @@ prowler --list-compliance
 - sudo yum -y install docker
  
 - sudo service docker start
-- sudo  docker run -p 8000:8000     ahmadjallab/ahmadjallab-prowler_aws:v2
+- sudo  docker run -p 8000:8000  --env-file .env     ahmadjallab/ahmadjallab-prowler_aws:v2
 
 - sudo yum install    nginx
 
 - sudo vim /etc/nginx/sites-enabled/fastapi_nginx
 - include /etc/nginx/sites-enabled/fastapi_nginx; in /etc/nginx/nginx.conf
-- or can start with default conf server
--  
+- or can start with default conf server in /etc/nginx/sites-enabled/default
+-  use nano for edit file in /etc/nginx/sites-enabled/default
 - sudo systemctl start nginx
 - sudo systemctl restart nginx
 - sudo systemctl enable nginx
@@ -284,9 +512,77 @@ server {
         listen 80;
         server_name 3.83.14.33 ;
         location / {
-                proxy_pass http//172.17.0.1:8000;
+                proxy_pass http://localhost:8000;
         }
 }
 :wq  -> save command
 :qa! -> quit command
 -http//172.17.0.1:8000; access to from you in local machine as  (nginx) proxy pass to the container (fastapi) http://0.0.0.0:8000;
+
+-test for docker run  curl http://localhost:8000 -> in cli base 
+
+## GitHub Actions Workflow
+
+This project includes automated Docker image building and publishing using GitHub Actions. The workflow is triggered on:
+- Push to main branch
+- New version tags (v*.*.*)
+- Pull requests to main branch
+
+### Workflow Configuration
+
+The workflow configuration is located in `.github/workflows/docker-publish.yml`:
+
+```yaml
+name: Docker Build and Push
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ahmadjallab/ahmadjallab-prowler_aws
+```
+
+### Available Docker Images
+
+The Docker image is published to two registries:
+
+1. Docker Hub:
+```bash
+docker pull ahmadjallab/ahmadjallab-prowler_aws:latest
+```
+
+2. AWS ECR Public:
+```bash
+docker pull public.ecr.aws/b1s1h1d1/ahmadjallab/ahmadjallab-prowler_aws:latest
+```
+
+### Image Tags
+
+The workflow automatically generates several tags for each image:
+- `latest`: For the main branch
+- `v*.*.*`: For version releases
+- `sha-XXXXXXX`: For each commit
+- Branch name: For feature branches
+
+### Setting up GitHub Actions
+
+To enable the workflow, add these secrets to your GitHub repository:
+
+1. Go to your repository settings
+2. Navigate to Secrets and Variables > Actions
+3. Add the following secrets:
+   - `DOCKERHUB_USERNAME`: Your Docker Hub username
+   - `DOCKERHUB_TOKEN`: Your Docker Hub access token (not password)
+
+### Manual Workflow Dispatch
+
+You can also manually trigger the workflow:
+1. Go to Actions tab in your repository
+2. Select "Docker Build and Push" workflow
+3. Click "Run workflow"
+4. Choose the branch to build from

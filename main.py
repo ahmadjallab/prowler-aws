@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
 from dotenv import load_dotenv
@@ -16,6 +18,9 @@ app = FastAPI(
     description="API for running Prowler security assessments on AWS",
     version="1.0.0"
 )
+
+# Mount the static directory
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Sample data model
 
@@ -44,7 +49,7 @@ items = []
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the Prowler Security Assessment API"}
+    return FileResponse('static/index.html')
 
 # prowler aws  --output-formats json-asff --output-filename prowler_scan --output-directory ./results     --compliance aws_well_architected_framework_security_pillar_aws --region us-east-1
 @app.get("/api/run-prowler-generate-checks-report-fundings", response_model=ProwlerResponse)
