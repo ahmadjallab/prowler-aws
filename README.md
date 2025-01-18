@@ -2,6 +2,34 @@
 
 This API provides an interface to run Prowler security assessments on AWS environments and generate compliance reports based on AWS Well-Architected Framework Security Pillar. It allows you to perform security checks and receive detailed findings through a REST API.
 
+## Table of Contents
+
+- [Features](#features)
+- [Setup](#setup)
+  - [Prerequisites](#prerequisites)
+  - [AWS IAM Configuration](#aws-iam-configuration)
+    - [Option 1: IAM User](#option-1-iam-user)
+    - [Option 2: IAM Role](#option-2-iam-role)
+  - [Running with Docker](#option-1-running-with-docker)
+    - [Using Pre-built Image](#option-a-using-pre-built-image)
+    - [Building Locally](#option-b-building-locally)
+  - [Environment Variables](#environment-variables)
+  - [Local Development](#local-development)
+- [API Documentation](#api-documentation)
+  - [Endpoints](#endpoints)
+  - [Request/Response Examples](#requestresponse-examples)
+- [Project Structure](#project-structure)
+- [Deployment](#deployment)
+  - [Docker Deployment](#docker-deployment)
+  - [VPC and VPN Setup](#vpc-and-vpn-setup)
+- [Troubleshooting](#troubleshooting)
+  - [Common Issues](#common-issues)
+  - [Logs and Debugging](#logs-and-debugging)
+- [CI/CD Pipeline](#cicd-pipeline)
+  - [GitHub Actions Workflow](#github-actions-workflow)
+  - [Tag Generation Process](#tag-generation-process)
+- [Future Enhancements](#future-enhancements)
+
 ## Features
 
 - Run Prowler security assessments on AWS environments
