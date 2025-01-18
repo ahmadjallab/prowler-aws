@@ -1,10 +1,11 @@
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
 from dotenv import load_dotenv
-from endpointFunc import run_prowler_check ,export_prowler_file_report
+from endpointFunc import run_prowler_check ,export_prowler_file_report,LLM_gemini_summery_LLM_compliance_report
 # Load environment variables Using Temporary Credentials
 #If you’re using AWS Identity and Access Management (IAM) roles or temporary security credentials, you’ll need to include:
 load_dotenv()
@@ -21,6 +22,12 @@ app = FastAPI(
 
 # Mount the static directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Initialize templates
+templates = Jinja2Templates(directory="templates")
+
+# Store the report content globally (you might want to use a proper caching solution in production)
+report_content = {"content": ""}
 
 # Sample data model
 
@@ -47,9 +54,9 @@ class ProwlerFileResponse(BaseModel):
 # In-memory storage
 items = []
 
-@app.get("/")
-async def root():
-    return FileResponse('static/index.html')
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 # prowler aws  --output-formats json-asff --output-filename prowler_scan --output-directory ./results     --compliance aws_well_architected_framework_security_pillar_aws --region us-east-1
 @app.get("/api/run-prowler-generate-checks-report-fundings", response_model=ProwlerResponse)
@@ -66,6 +73,30 @@ async def export_prowler_file_report_compliance():
     return export_prowler_file_report('compliance')
 
 
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# if __name__ == '__main__':
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+@app.get("/report/compliance", response_class=HTMLResponse)
+async def show_compliance_report(request: Request):
+    return templates.TemplateResponse(
+        "compliance_report.html",
+        {"request": request, "content": report_content["content"]}
+    )
+
+@app.get("/api/LLM_gemini_summery_compliance_report")
+async def LLM_gemini_summery_compliance_report():
+    # Get the markdown content from the LLM
+    report_content["content"] = LLM_gemini_summery_LLM_compliance_report()
+    
+    # Return JSON response with the content
+    return JSONResponse({
+        "status": "success",
+        "content": report_content["content"]
+    })
+
+
+@app.get("/docs_page", response_class=HTMLResponse)
+async def show_docs(request: Request):
+    return FileResponse("static/docs.html", media_type="text/html")

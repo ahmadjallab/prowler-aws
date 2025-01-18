@@ -19,6 +19,119 @@ This API provides an interface to run Prowler security assessments on AWS enviro
 - AWS Account with appropriate permissions
 - Prowler CLI installed
 
+### AWS IAM Configuration
+
+#### Option 1: IAM User Configuration
+
+1. Create an IAM User:
+   ```bash
+   aws iam create-user --user-name ProwlerSecurityAuditor
+   ```
+
+2. Required IAM Permissions:
+   Create a policy file `prowler-security-policy.json`:
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Effect": "Allow",
+               "Action": [
+                   "access-analyzer:List*",
+                   "account:Get*",
+                   "acm:Describe*",
+                   "acm:List*",
+                   "apigateway:GET",
+                   "cloudtrail:GetEventSelectors",
+                   "cloudtrail:GetTrailStatus",
+                   "cloudtrail:LookupEvents",
+                   "cloudwatch:GetMetricData",
+                   "cloudwatch:GetMetricStatistics",
+                   "cloudwatch:ListMetrics",
+                   "config:BatchGetResourceConfig",
+                   "config:List*",
+                   "ec2:Describe*",
+                   "ecr:Describe*",
+                   "ecr:List*",
+                   "ecs:Describe*",
+                   "ecs:List*",
+                   "eks:Describe*",
+                   "eks:List*",
+                   "elasticloadbalancing:Describe*",
+                   "iam:Get*",
+                   "iam:List*",
+                   "kms:Describe*",
+                   "kms:Get*",
+                   "kms:List*",
+                   "rds:Describe*",
+                   "rds:List*",
+                   "s3:Get*",
+                   "s3:List*",
+                   "secretsmanager:List*",
+                   "securityhub:Get*",
+                   "securityhub:List*",
+                   "sns:List*",
+                   "sqs:List*"
+               ],
+               "Resource": "*"
+           }
+       ]
+   }
+   ```
+
+3. Create and Attach Policy:
+   ```bash
+   aws iam create-policy --policy-name ProwlerSecurityAuditPolicy --policy-document file://prowler-security-policy.json
+   aws iam attach-user-policy --user-name ProwlerSecurityAuditor --policy-arn arn:aws:iam::<YOUR_ACCOUNT_ID>:policy/ProwlerSecurityAuditPolicy
+   ```
+
+4. Create Access Keys:
+   ```bash
+   aws iam create-access-key --user-name ProwlerSecurityAuditor
+   ```
+
+#### Option 2: IAM Role Configuration
+
+1. Create Trust Policy:
+   Create `trust-policy.json`:
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Effect": "Allow",
+               "Principal": {
+                   "Service": "ec2.amazonaws.com"
+               },
+               "Action": "sts:AssumeRole"
+           }
+       ]
+   }
+   ```
+
+2. Create Role:
+   ```bash
+   aws iam create-role --role-name ProwlerAuditRole --assume-role-policy-document file://trust-policy.json
+   ```
+
+3. Attach Policy:
+   ```bash
+   aws iam attach-role-policy --role-name ProwlerAuditRole --policy-arn arn:aws:iam::<YOUR_ACCOUNT_ID>:policy/ProwlerSecurityAuditPolicy
+   ```
+
+#### Environment Configuration
+
+Add AWS credentials to your `.env` file:
+```bash
+AWS_ACCESS_KEY_ID=<your_access_key>
+AWS_SECRET_ACCESS_KEY=<your_secret_key>
+AWS_REGION=<your_region>
+# If using a role
+AWS_ROLE_ARN=arn:aws:iam::<YOUR_ACCOUNT_ID>:role/ProwlerAuditRole
+```
+
+**Note**: It's recommended to use IAM roles instead of access keys for enhanced security, especially in production environments.
+
 ### Option 1: Running with Docker
 
 You can either build the image locally or pull the pre-built image from a container registry.
@@ -359,33 +472,82 @@ Note: The VPN client configuration file and certificates are sensitive security 
     }
     ```
 
+## AI Endpoint Documentation
+
+### VPN Access Requirements
+
+The AI endpoints in this application require secure VPN access to ensure data protection and maintain compliance with security standards. Below are the key endpoints and their access requirements:
+
+#### 1. AI Security Assessment Summary Endpoint
+```
+GET /api/LLM_gemini_summery_compliance_report
+```
+
+**Access Requirements:**
+- VPN Connection Required: Yes
+- Authentication: Required
+- Role-Based Access: Security Analyst or above
+
+**Description:**  
+This endpoint leverages Gemini LLM to generate an intelligent summary of security compliance reports. It processes Prowler security assessment data and provides actionable insights.
+
+**Response Format:**
+```json
+{
+    "status": "success",
+    "content": "<markdown formatted security analysis>"
+}
+```
+
+**Security Considerations:**
+- All requests must originate from within the approved VPN network
+- Rate limiting is applied to prevent API abuse
+- Sensitive security findings are encrypted in transit
+- Access logs are maintained for audit purposes
+
+**Usage Notes:**
+1. Ensure VPN connection is established before making API calls
+
+
+
+For technical support or access issues, contact the security operations team.
+
 ## Project Structure
 ```
-plowerappdev/
+prowler-appdev/
 ├── .github/
 │   └── workflows/
 │       └── docker-publish.yml    # GitHub Actions workflow
+├── LLM/
+│   └── gemini_summery_LLM_compliance_report.py    # Gemini AI integration for report analysis
+|
+├── output/
+│   └── compliance/              # Generated compliance reports
+├── results/
+│   └── prowler_scan.asff.json   # Prowler scan results
 ├── static/
-│   └── index.html               # Landing page
+│   └── docs/                     # API documentation
+├── templates/
+│   ├── index.html              # main page
+│   └── compliance_report.html   # Report template
 ├── utils/
 │   ├── ReportGenerationPipeline.py    # Report generation logic
 │   ├── parseFindings_prowlerScan.py   # Findings parser
 │   └── scan_mapping_findings_func.py   # Security mapping
 ├── compliance_filecheck/
-│   └── RequirementIDs_for_corresponding_checks_pillar_sec01_sec03.json
-├── results/                     # Generated reports
+│   └── RequirementIDs_for_corresponding_checks_pillar_sec01_sec03.json # Compliance mapping
+├── results/                     # Generated reports 
 │   └── prowler_scan.asff.json
 ├── output/
 │   └── compliance/             # Compliance reports
 ├── .dockerignore               # Docker ignore rules
 ├── .env                        # Environment variables
 ├── .gitignore                 # Git ignore rules
-├── Dockerfile                 # Docker build instructions
-├── LICENSE                    # Project license
-├── README.md                  # Project documentation
+├── Dockerfile                 # Docker configuration
 ├── endpointFunc.py           # API endpoint functions
-├── main.py                   # FastAPI application
-└── requirements.txt          # Python dependencies
+├── main.py                   # FastAPI application entry point
+├── requirements.txt          # Python dependencies
+└── version.json             # Application version info for GitHub Actions workflow mechanism to update flag version
 ```
 
 ### Key Components
@@ -399,20 +561,22 @@ plowerappdev/
    - Prowler integration
    - Findings parsing
    - Report generation
+   - pipeline integration for report generation
 
 3. **Compliance Mapping** (`compliance_filecheck/`)
    - Security pillar mappings
-   - Compliance requirements
+   - Compliance requirements for each pillar section (SEC01, SEC02, SEC03) aws well-architected framework security pillars compliance
 
 4. **Infrastructure** (`Dockerfile`, `docker-publish.yml`)
    - Container configuration
    - CI/CD pipeline
-   - Deployment automation
+   - Deployment automation using GitHub Actions workflow mechanism in docker hub
 
 5. **Documentation** (`static/`, `README.md`)
    - API documentation
    - Setup instructions
    - Usage guides
+   - Troubleshooting guides by endpoint testing and error handling
 
 ## Response Formats
 
@@ -433,6 +597,14 @@ plowerappdev/
     }
 }
 ```
+**Note:** The findings report can be exported in text format for easier readability and sharing. To export the report as a text file, use the following endpoint:
+
+```
+GET /api/run-prowler-generate-checks-report-fundings
+```
+
+This endpoint generates a plain text version of the compliance report, maintaining the structure and key findings while providing a lightweight, easily distributable format.
+
 
 ### Compliance Report
 ```json
@@ -445,7 +617,11 @@ plowerappdev/
     }
 }
 ```
+**Note:** The compliance report can be exported in text format for easier readability and sharing. To export the report as a text file, use the following endpoint:
 
+```
+GET /api/export-compliance-report
+```
 ## Error Handling
 
 The API handles various error scenarios:
@@ -461,19 +637,38 @@ Each error response includes:
 
 ## Documentation
 
+- HTML API documentation: http://localhost:8000/docs_page
 - Interactive API documentation (Swagger UI): http://localhost:8000/docs
 - Alternative API documentation (ReDoc): http://localhost:8000/redoc
 - Prowler Documentation: https://docs.prowler.com/
 
+
 ## Running the Application
 
-Start the server:
+
+### ***Option A*** 
 ```bash
 uvicorn main:app --reload --port 8000
 ```
-
+**note** if use this approach you must comment out the line in main.py
+```python 
+# if __name__ == '__main__':
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+```
 Access the API at http://localhost:8000
+### ***Option B***
 
+```bash
+ptyhon main.py
+```
+**note** if use this approach you must check for line is not commented out in main.py 
+```python 
+ if __name__ == '__main__':
+     import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+```
+Access the API at http://localhost:8000
 ## Supported Services
 
 You can run checks for various AWS services including:
@@ -494,6 +689,8 @@ https://docs.prowler.com/projects/prowler-open-source/en/latest/#__tabbed_2_8
 
 
 [text](http://127.0.0.1:8000/docs/)
+
+## some commands to check
 
 uvicorn main:app --reload --port 8000
 
@@ -584,8 +781,7 @@ server {
 
 This project includes automated Docker image building and publishing using GitHub Actions. The workflow is triggered on:
 - Push to main branch
-- New version tags (v*.*.*)
-- Pull requests to main branch
+
 
 ### Workflow Configuration
 
@@ -597,9 +793,7 @@ name: Docker Build and Push
 on:
   push:
     branches: [ "main" ]
-    tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
+  
 
 env:
   REGISTRY: docker.io
@@ -622,11 +816,33 @@ docker pull public.ecr.aws/b1s1h1d1/ahmadjallab/ahmadjallab-prowler_aws:latest
 
 ### Image Tags
 
-The workflow automatically generates several tags for each image:
+The workflow generates the following tag for the image:
 - `latest`: For the main branch
-- `v*.*.*`: For version releases
-- `sha-XXXXXXX`: For each commit
-- Branch name: For feature branches
+
+Note: Version tags (v*.*.*) have been removed from the automated workflow. Images are now only tagged with 'latest' when pushing to the main branch.
+
+### Tag Generation Process
+
+The workflow automatically handles version tagging through the following steps:
+
+1. Version Management
+   - Reads current version from `version.json`
+   - Increments the version number
+   - Updates `version.json` with new version
+   - Commits the change with message "Bump version to [version] [skip ci]"
+
+2. Docker Tag Creation
+   - Uses docker/metadata-action to generate tags
+   - Tags format: `v[number]` (e.g., v1, v2, v3)
+   - Tags are applied only on pushes to main branch
+   - Automated version incrementing ensures unique tags for each build
+
+   Why Docker Tags Matter:
+   - Version Control: Tags help track different versions of your container image, making it easy to roll back to previous versions if needed
+   - Deployment Management: Different environments (dev, staging, prod) can use specific versions of your application
+   - Reproducibility: Each build has a unique tag, ensuring you can always recreate the exact environment
+   - Auditing: Tags help track which version is running in production and when changes were made
+   - CI/CD Integration: Automated tagging simplifies continuous deployment by providing consistent versioning
 
 ### Setting up GitHub Actions
 
@@ -645,3 +861,129 @@ You can also manually trigger the workflow:
 2. Select "Docker Build and Push" workflow
 3. Click "Run workflow"
 4. Choose the branch to build from
+
+## New Features and Updates : V5
+
+
+### API Documentation Page 
+
+The documentation page (`/docs`) has been enhanced with:
+
+1. Interactive Features
+   - Live API testing capability
+   - Request/response examples
+   - Real-time endpoint testing
+
+2. Navigation
+   - Quick links to all endpoints
+   - Organized by category
+   - Search functionality
+
+3. Visual Improvements
+   - Syntax highlighting for code examples
+   - Clear endpoint descriptions
+   - Status code indicators
+
+### Compliance Report Enhancements
+
+The compliance report page now includes:
+
+1. Print Optimization
+   - Print-friendly layout
+   - Footer positioning for printed pages
+   
+
+2. Navigation
+   - "Go Back" functionality
+   - Quick links to documentation
+   - Easy access to dashboard
+
+3. Content Display
+   - Better formatting for findings
+   - Severity indicators
+   - Collapsible sections
+
+### Dashboard Updates
+
+The main dashboard (`/`) features:
+
+1. New UI Elements
+   - Documentation access button
+   - Status indicators
+   - Loading animations
+
+2. Improved Layout
+   - Centered content design
+   - Responsive grid system
+   - Better spacing and alignment
+
+### Brand Guidelines
+
+When extending or modifying the application, maintain these branding elements:
+
+1. Colors
+   - Primary Blue: #0366d6
+   - Secondary Gray: #586069
+   - Background: #ffffff
+   - Text: #24292e
+
+2. Typography
+   - Main Font: System default
+   - Logo Font: Bold weight for "AJC"
+   - Regular weight for "Security"
+
+3. Layout
+   - Centered content
+   - Consistent padding (2rem)
+   - Responsive breakpoints
+   - Footer always visible
+
+4. Assets
+   - Heart emoji in attribution
+   - GitHub icon in links
+   - Document icons for navigation
+
+### Future Enhancements
+
+Planned features for future releases:
+
+1. Authentication
+   - User login system
+   - Role-based access control
+   - Session management
+
+2. Reporting
+   - Custom report templates
+   - Export in multiple formats
+   - Scheduled reports
+
+3. Integration
+   - Additional cloud providers
+   - Third-party security tools
+   - Custom compliance frameworks
+
+4. AI-Powered Security Analysis
+   - Intelligent threat detection and prioritization
+   - Automated security recommendations based on findings
+   - Machine learning models for anomaly detection
+   - Natural language processing for security report generation
+   - Predictive security risk assessment
+
+5. UI/UX
+   - Dark mode support
+   - Custom theming options
+   - Accessibility improvements
+
+## Contact
+
+For questions, support, or contributions, please contact:
+- GitHub: [@ahmadjallab](https://github.com/ahmadjallab)
+- Email: [contact@ajcsecurity.com](mailto:contact@ajcsecurity.com)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+ 2025 AJC Security. All rights reserved.

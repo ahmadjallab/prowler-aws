@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Documentation - AWS Security Compliance Tool</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f6f8fa;
+        }
+
+        .header {
+            background-color: #24292e;
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .nav-button {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #2ea44f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #2c974b;
+        }
+
+        .endpoint-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .endpoint {
+            border-left: 4px solid #0366d6;
+            padding: 1rem;
+            margin: 1rem 0;
+            background-color: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .get {
+            background-color: #0366d6;
+            color: white;
+        }
+
+        .post {
+            background-color: #2ea44f;
+            color: white;
+        }
+
+        .endpoint-url {
+            font-family: monospace;
+            background-color: #f1f1f1;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .description {
+            margin-top: 0.5rem;
+            color: #586069;
+        }
+
+        .response {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .response pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        h1 {
+            margin: 0;
+            text-align: center;
+        }
+
+        h2 {
+            color: #24292e;
+            border-bottom: 1px solid #e1e4e8;
+            padding-bottom: 0.5rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .test-button {
+            float: right;
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .test-button:hover {
+            background-color: #5a32a3;
+        }
+
+        .test-button svg {
+            width: 14px;
+            height: 14px;
+            margin-right: 4px;
+            vertical-align: text-bottom;
+        }
+
+        .actions {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .new {
+            background-color: #2ea44f;
+            color: white;
+        }
+
+        .beta {
+            background-color: #f66a0a;
+            color: white;
+        }
+
+        .brand-footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid #e1e4e8;
+            color: #586069;
+        }
+
+        .brand-footer a {
+            color: #0366d6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .brand-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #24292e;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-logo span {
+            color: #0366d6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="nav-button">← Back to Dashboard</a>
+        <h1>API Documentation</h1>
+    </div>
+
+    <div class="endpoint-section">
+        <div class="actions">
+            <h2>Available Endpoints</h2>
+            <a href="/docs" class="test-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M3.75 1.5a.25.25 0 00-.25.25v11.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V6H9.75A1.75 1.75 0 018 4.25V1.5H3.75zm5.75.56v2.19c0 .138.112.25.25.25h2.19L9.5 2.06zM2 1.75C2 .784 2.784 0 3.75 0h5.086c.464 0 .909.184 1.237.513l3.414 3.414c.329.328.513.773.513 1.237v8.086A1.75 1.75 0 0112.25 15h-8.5A1.75 1.75 0 012 13.25V1.75z"/>
+                </svg>
+                Live API Docs
+            </a>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/</span>
+            <div class="description">Main dashboard page for the AWS Security Compliance Tool.</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/docs_page</span>
+            <div class="description">API documentation page (you are here).</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/run-prowler-generate-checks-report-fundings</span>
+            <div class="description">Run Prowler security checks and generate a findings report.</div>
+            <div class="response">
+                <strong>Response Format:</strong>
+                <pre>{
+    "status": "success|error",
+    "results": {
+        // Prowler check results
+    }
+}</pre>
+            </div>
+            <div class="actions">
+                <div></div>
+                <a href="/docs#/default/run_prowler_generate_checks_report_fundings_api_run_prowler_generate_checks_report_fundings_get" class="test-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25a1.75 1.75 0 01.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.249.249 0 00.108-.064l6.286-6.286z"/>
+                    </svg>
+                    Test Endpoint
+                </a>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/export-prowler-file-report</span>
+            <div class="description">Export the Prowler security report as a file.</div>
+            <div class="response">
+                <strong>Response:</strong> File download (JSON format)
+            </div>
+            <div class="actions">
+                <div></div>
+                <a href="/docs#/default/export_prowler_file_report_api_export_prowler_file_report_get" class="test-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25a1.75 1.75 0 01.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.249.249 0 00.108-.064l6.286-6.286z"/>
+                    </svg>
+                    Test Endpoint
+                </a>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/api/LLM_gemini_summery_compliance_report</span>
+            <span class="tag new">New</span>
+            <div class="description">Generate an AI-powered analysis of the compliance report using Google's Gemini model.</div>
+            <div class="response">
+                <strong>Response Format:</strong>
+                <pre>{
+    "status": "success|error",
+    "content": "Markdown formatted analysis"
+}</pre>
+            </div>
+            <div class="actions">
+                <div></div>
+                <a href="/docs#/default/LLM_gemini_summery_compliance_report_api_LLM_gemini_summery_compliance_report_get" class="test-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25a1.75 1.75 0 01.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.249.249 0 00.108-.064l6.286-6.286z"/>
+                    </svg>
+                    Test Endpoint
+                </a>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-url">/report/compliance</span>
+            <span class="tag new">New</span>
+            <div class="description">View the formatted compliance report analysis in a user-friendly interface.</div>
+        </div>
+    </div>
+
+    <div class="endpoint-section">
+        <h2>Response Codes</h2>
+        <div class="endpoint">
+            <strong>200 OK:</strong> Request successful
+        </div>
+        <div class="endpoint">
+            <strong>400 Bad Request:</strong> Invalid parameters or request
+        </div>
+        <div class="endpoint">
+            <strong>500 Internal Server Error:</strong> Server-side error during processing
+        </div>
+    </div>
+
+    <div class="brand-footer">
+        <div class="brand-logo"><span>AJC</span> Security</div>
+        <p>Developed with ❤️ by <a href="https://github.com/ahmadjallab" target="_blank">Ahmad Jallab Dev</a></p>
+        <p>© 2025 AJC Security. All rights reserved.</p>
+    </div>
+</body>
+</html>
