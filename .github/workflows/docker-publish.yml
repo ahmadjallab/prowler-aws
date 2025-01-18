@@ -1,69 +1,69 @@
-name: Docker Build and Push
+# name: Docker Build and Push
 
-on:
-  push:
-    branches: [ "main" ]
+# on:
+#   push:
+#     branches: [ "main" ]
     
 
 
-env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: docker.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ahmadjallab/ahmadjallab-prowler_aws
+# env:
+#   # Use docker.io for Docker Hub if empty
+#   REGISTRY: docker.io
+#   # github.repository as <account>/<repo>
+#   IMAGE_NAME: ahmadjallab/ahmadjallab-prowler_aws
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: write
+#       packages: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
 
-      # Login to Docker Hub
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#       # Login to Docker Hub
+#       - name: Log in to Docker Hub
+#         uses: docker/login-action@v2
+#         with:
+#           username: ${{ secrets.DOCKERHUB_USERNAME }}
+#           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Read version from file and increment
-      - name: Read and increment version
-        id: version
-        run: |
-          VERSION=$(jq -r '.version' version.json)
-          NEXT_VERSION=$((VERSION + 1))
-          echo $NEXT_VERSION > version.next
-          echo "version=v$NEXT_VERSION" >> $GITHUB_OUTPUT
+#       # Read version from file and increment
+#       - name: Read and increment version
+#         id: version
+#         run: |
+#           VERSION=$(jq -r '.version' version.json)
+#           NEXT_VERSION=$((VERSION + 1))
+#           echo $NEXT_VERSION > version.next
+#           echo "version=v$NEXT_VERSION" >> $GITHUB_OUTPUT
 
-      # Update version file
-      - name: Update version file
-        if: github.event_name != 'pull_request'
-        run: |
-          NEXT_VERSION=$(cat version.next)
-          echo "{\"version\": \"$NEXT_VERSION\"}" > version.json
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add version.json
-          git commit -m "Bump version to $NEXT_VERSION [skip ci]"
-          git push
+#       # Update version file
+#       - name: Update version file
+#         if: github.event_name != 'pull_request'
+#         run: |
+#           NEXT_VERSION=$(cat version.next)
+#           echo "{\"version\": \"$NEXT_VERSION\"}" > version.json
+#           git config --local user.email "action@github.com"
+#           git config --local user.name "GitHub Action"
+#           git add version.json
+#           git commit -m "Bump version to $NEXT_VERSION [skip ci]"
+#           git push
 
-      # Extract metadata (tags) for Docker
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=${{ steps.version.outputs.version }}
+#       # Extract metadata (tags) for Docker
+#       - name: Extract Docker metadata
+#         id: meta
+#         uses: docker/metadata-action@v4
+#         with:
+#           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+#           tags: |
+#             type=raw,value=${{ steps.version.outputs.version }}
 
-      # Build and push Docker image
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+#       # Build and push Docker image
+#       - name: Build and push Docker image
+#         uses: docker/build-push-action@v4
+#         with:
+#           context: .
+#           push: ${{ github.event_name != 'pull_request' }}
+#           tags: ${{ steps.meta.outputs.tags }}

@@ -21,15 +21,21 @@ This API provides an interface to run Prowler security assessments on AWS enviro
 
 ### AWS IAM Configuration
 
-#### Option 1: IAM User Configuration
+#### Option 1: IAM User
 
 1. Create an IAM User:
-   ```bash
-   aws iam create-user --user-name ProwlerSecurityAuditor
-   ```
+   - Go to AWS IAM Console
+   - Create a new IAM user for Prowler
+   - Enable programmatic access to get access key and secret
 
-2. Required IAM Permissions:
-   Create a policy file `prowler-security-policy.json`:
+2. Required AWS Managed Policies:
+   ```
+   arn:aws:iam::aws:policy/SecurityAudit
+   arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+   ```
+   Attach these managed policies to your IAM user or role for comprehensive security assessment capabilities.
+
+3. Additional Custom Permissions (if needed):
    ```json
    {
        "Version": "2012-10-17",
@@ -42,16 +48,24 @@ This API provides an interface to run Prowler security assessments on AWS enviro
                    "acm:Describe*",
                    "acm:List*",
                    "apigateway:GET",
-                   "cloudtrail:GetEventSelectors",
-                   "cloudtrail:GetTrailStatus",
-                   "cloudtrail:LookupEvents",
-                   "cloudwatch:GetMetricData",
-                   "cloudwatch:GetMetricStatistics",
-                   "cloudwatch:ListMetrics",
-                   "config:BatchGetResourceConfig",
+                   "application-autoscaling:Describe*",
+                   "autoscaling:Describe*",
+                   "backup:List*",
+                   "cloudformation:Describe*",
+                   "cloudformation:List*",
+                   "cloudfront:List*",
+                   "cloudtrail:Describe*",
+                   "cloudtrail:Get*",
+                   "cloudtrail:List*",
+                   "cloudwatch:Describe*",
+                   "cloudwatch:Get*",
+                   "cloudwatch:List*",
+                   "config:Get*",
                    "config:List*",
+                   "dynamodb:List*",
                    "ec2:Describe*",
                    "ecr:Describe*",
+                   "ecr:Get*",
                    "ecr:List*",
                    "ecs:Describe*",
                    "ecs:List*",
@@ -63,15 +77,23 @@ This API provides an interface to run Prowler security assessments on AWS enviro
                    "kms:Describe*",
                    "kms:Get*",
                    "kms:List*",
+                   "lambda:List*",
+                   "logs:Describe*",
+                   "logs:Get*",
+                   "logs:List*",
                    "rds:Describe*",
                    "rds:List*",
                    "s3:Get*",
                    "s3:List*",
                    "secretsmanager:List*",
-                   "securityhub:Get*",
-                   "securityhub:List*",
+                   "ses:Get*",
+                   "ses:List*",
+                   "shield:List*",
                    "sns:List*",
-                   "sqs:List*"
+                   "sqs:List*",
+                   "ssm:Describe*",
+                   "ssm:Get*",
+                   "tag:Get*"
                ],
                "Resource": "*"
            }
@@ -79,21 +101,30 @@ This API provides an interface to run Prowler security assessments on AWS enviro
    }
    ```
 
-3. Create and Attach Policy:
+4. Configure Credentials:
    ```bash
-   aws iam create-policy --policy-name ProwlerSecurityAuditPolicy --policy-document file://prowler-security-policy.json
-   aws iam attach-user-policy --user-name ProwlerSecurityAuditor --policy-arn arn:aws:iam::<YOUR_ACCOUNT_ID>:policy/ProwlerSecurityAuditPolicy
+   # Option A: Environment Variables
+   export AWS_ACCESS_KEY_ID="your_access_key"
+   export AWS_SECRET_ACCESS_KEY="your_secret_key"
+   export AWS_DEFAULT_REGION="your_region"
+
+   # Option B: AWS Credentials File
+   aws configure
    ```
 
-4. Create Access Keys:
-   ```bash
-   aws iam create-access-key --user-name ProwlerSecurityAuditor
-   ```
+#### Option 2: IAM Role
 
-#### Option 2: IAM Role Configuration
+1. Create an IAM Role:
+   - Create a new role in AWS IAM Console
+   - Attach the required AWS managed policies:
+     ```
+     arn:aws:iam::aws:policy/SecurityAudit
+     arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+     ```
+   - Attach additional custom permissions if needed (see above policy)
+   - Configure trust relationship for your use case
 
-1. Create Trust Policy:
-   Create `trust-policy.json`:
+2. Role Trust Relationship Example:
    ```json
    {
        "Version": "2012-10-17",
@@ -109,28 +140,21 @@ This API provides an interface to run Prowler security assessments on AWS enviro
    }
    ```
 
-2. Create Role:
+3. Using the Role:
+   - If running on EC2: Attach the role directly to the instance
+   - If running elsewhere: Use AWS STS AssumeRole
    ```bash
-   aws iam create-role --role-name ProwlerAuditRole --assume-role-policy-document file://trust-policy.json
+   # Using AWS CLI to assume role
+   aws sts assume-role --role-arn "arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME" --role-session-name "ProwlerSession"
    ```
 
-3. Attach Policy:
+4. Environment Setup for Role:
    ```bash
-   aws iam attach-role-policy --role-name ProwlerAuditRole --policy-arn arn:aws:iam::<YOUR_ACCOUNT_ID>:policy/ProwlerSecurityAuditPolicy
+   # If using temporary credentials from assumed role
+   export AWS_ACCESS_KEY_ID="temp_access_key"
+   export AWS_SECRET_ACCESS_KEY="temp_secret_key"
+   export AWS_SESSION_TOKEN="temp_session_token"
    ```
-
-#### Environment Configuration
-
-Add AWS credentials to your `.env` file:
-```bash
-AWS_ACCESS_KEY_ID=<your_access_key>
-AWS_SECRET_ACCESS_KEY=<your_secret_key>
-AWS_REGION=<your_region>
-# If using a role
-AWS_ROLE_ARN=arn:aws:iam::<YOUR_ACCOUNT_ID>:role/ProwlerAuditRole
-```
-
-**Note**: It's recommended to use IAM roles instead of access keys for enhanced security, especially in production environments.
 
 ### Option 1: Running with Docker
 
@@ -741,6 +765,7 @@ prowler --list-compliance
 - soc2_aws
 
 ### Install Docker on ec2 instance depenting on your distrobution 
+- git reset HEAD~1 -> undo last commit
 - sudo bash 
 - sudo yum update -y 
 - root@ip-10-0-5-157:/home/ubuntu# yum update -y 
